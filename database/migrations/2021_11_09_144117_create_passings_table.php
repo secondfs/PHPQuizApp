@@ -18,7 +18,7 @@ class CreatePassingsTable extends Migration
             $table->string('nickname')->unique();
             $table->integer('correct_answers')->nullable();
             $table->integer('total_answers');// Should take this from app config
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
         });
     }
 

@@ -2,7 +2,14 @@ body {
 
 }
 
+
 form {
     display: flex;
     justify-content: center;
 }
+
+form[name='nickname'] {
+    display: none;
+}
+
+

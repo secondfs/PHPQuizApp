@@ -231,4 +231,6 @@ return [
 
     ],
 
+    'questionCount' => 10,
+
 ];
