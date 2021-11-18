@@ -1,13 +1,12 @@
 let currentQuestion = 0;
 let answer = [];
 let correctAnswers = 0;
+let questionCount = document.querySelector('div#question-all').dataset.questioncount;
 let questionBlocks = document.querySelectorAll('div.question-block');
 let respondCharSpan = document.querySelectorAll('.respond-char');
-const token = document.querySelector('input[name="_token"]').getAttribute('value');
+const token = questionBlocks.item(currentQuestion).querySelector('input[name="_token"]').getAttribute('value');
 
 
-
-let successButton = document.querySelectorAll('div.question-block').item(currentQuestion).querySelector('.btn-success');
 let successButtons = document.querySelectorAll('.btn-success');
 let answerButtons = document.querySelectorAll('button.checkbox');
 
@@ -24,23 +23,36 @@ function chooseAnswer() {
 function doAnswer() {
     let questionId = questionBlocks.item(currentQuestion).querySelector('span.question_id').dataset.questionId;
 
-    doNextQuestionVisible(currentQuestion);
-    fillAnswerArray();
-    console.log(answer);
 
+    fillAnswerArray();
+    if(isLastQuestion()) {
+        alert("it's over");
+        displayQuizResult();
+        return;
+    }
+    doNextQuestionVisible(currentQuestion);
     clearPreviousAnswer();
 
-    doAJAXRequest(answer,questionId);
+    sendAnswer(answer,questionId);
 
 
     answer = [];
     currentQuestion++;
+
+
 
     function fillAnswerArray() {
         questionBlocks.item(currentQuestion).querySelectorAll(".checkbox.active").forEach(element => {
             answer.push(element.dataset.choise);
         })
     }
+
+
+
+
+}
+function displayQuizResult() {
+    alert('You have ' + correctAnswers + ' from '+ questionCount);
 }
 
 function clearPreviousAnswer() {
@@ -67,25 +79,37 @@ function doNextQuestionVisible(currentQuestion) {
     questionBlockNext.style.display="block";
 }
 
-function doAJAXRequest(answer,questionId) {
-   let data = {
-       answer: `${answer.join(',')}`,
-       questionId: `${questionId}`,
-   }
-   console.log(data);
+async function sendAnswer(answer,questionId) {
+    let data = {
+        'answer' : answer,
+        'questionId' : questionId,
+    }
 
 
-    let response = fetch(`/api/answer/${questionId}/`, {
+
+    let response = await fetch(`/api/answer/${questionId}/`, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json;charset=utf-8',
-            // "X-CSRF-TOKEN": token,
+            // 'Content-Type': 'application/json;charset=utf-8',
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            "X-CSRF-TOKEN": token,
 
         },
         body: JSON.stringify(data)
     });
-    // let result = response.json();
-    // alert(result.message);
+    if (!response.ok) {
+        throw new Error("HTTP error " + response.status);
+    }
+    let result = await response.json();
+    if(result == true) {
+        return correctAnswers++;
+    }
+}
+
+function isLastQuestion() {
+
+    return currentQuestion >= questionCount - 1? true : false;
 }
 
 answerButtons.forEach(

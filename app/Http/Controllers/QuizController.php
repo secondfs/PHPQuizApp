@@ -37,7 +37,8 @@ class QuizController extends Controller
     {
         $questionCount = Config::get('app.questionCount');
         return view('quizes.index',[
-            'questions' => Question::inRandomOrder()->take($questionCount)->get(),
+//            'questions' => Question::inRandomOrder()->take($questionCount)->get(),
+            'questions' => Question::take($questionCount)->get(),
             'respond_chars' => ['a','b','c'],
         ]);
     }

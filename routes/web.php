@@ -25,4 +25,8 @@ Route::get('/', function () {
 
 //Route::post('quiz/run/',[QuizController::class, 'create']);
 Route::get('quiz/run/',[QuizController::class, 'index']);
-Route::post('/api/answer/{questionId}/',[QuestionsController::class, 'isCorrect']);
+Route::get('/test/{id}',[QuestionsController::class, 'test']);
+Route::post('/api/answer/{questionId}',[QuestionsController::class, 'isCorrect']);
+Route::get('/quiz/leaderboard',function () {
+    return view('quizes.results');
+});
