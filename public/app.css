@@ -12,4 +12,15 @@ form[name='nickname'] {
     display: none;
 }
 
+/*remove dublication here */
+.btn:focus {
+    outline: 0 !important;
+    box-shadow: none !important
+}
+
+.btn:active {
+    outline: 0 !important;
+    box-shadow: none !important
+}
+
 

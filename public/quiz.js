@@ -4,6 +4,8 @@ let correctAnswers = 0;
 let questionCount = document.querySelector('div#question-all').dataset.questioncount;
 let questionBlocks = document.querySelectorAll('div.question-block');
 let respondCharSpan = document.querySelectorAll('.respond-char');
+let nickname = document.querySelector('div#question-all').dataset.nickname;
+
 const token = questionBlocks.item(currentQuestion).querySelector('input[name="_token"]').getAttribute('value');
 
 
@@ -27,6 +29,7 @@ function doAnswer() {
     fillAnswerArray();
     if(isLastQuestion()) {
         alert("it's over");
+        saveQuizResult();
         displayQuizResult();
         return;
     }
@@ -51,8 +54,41 @@ function doAnswer() {
 
 
 }
-function displayQuizResult() {
-    alert('You have ' + correctAnswers + ' from '+ questionCount);
+
+async function displayQuizResult() {
+    window.location.replace(`${window.location.origin}/quiz/${nickname}/`);
+    // let response =  await fetch(`${window.location.origin}/quiz/${nickname}/`);
+    // let result = await response.json();
+    // if (!response.ok) {
+    //     throw new Error("HTTP error " + response.status);
+    // }
+    // console.log(result);
+
+}
+
+async function saveQuizResult() {
+
+    let data = {
+        'correct_answers' : correctAnswers,
+        'nickname' : nickname,
+    }
+
+    let response = await fetch(`/api/quiz/${nickname}/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            "X-CSRF-TOKEN": token,
+
+        },
+        body: JSON.stringify(data)
+    });
+    if (!response.ok) {
+        throw new Error("HTTP error " + response.status);
+    }
+    let result = await response.json();
+    console.log(result);
+
 }
 
 function clearPreviousAnswer() {

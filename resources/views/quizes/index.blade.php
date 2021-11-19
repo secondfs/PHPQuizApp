@@ -1,5 +1,5 @@
 <x-layout>
-    <div id="question-all" data-questionCount="{{ Config::get('app.questionCount') }}">
+    <div id="question-all" data-questionCount="{{ Config::get('app.questionCount') }}" data-nickname="{{ $nickname }}">
         @foreach($questions as $question)
             <div class="container mt-5 question-block">
                 @csrf
@@ -31,7 +31,7 @@
                                 @endforeach
                             </div>
                             <div class="d-flex flex-row justify-content-between align-items-center p-3 bg-white">
-                                <button class="btn btn-primary d-flex align-items-center btn-danger" type="button"><i class="fa fa-angle-left mt-1 mr-1"></i>&nbsp;previous</button>
+{{--                                <button class="btn btn-primary d-flex align-items-center btn-danger" type="button"><i class="fa fa-angle-left mt-1 mr-1"></i>&nbsp;previous</button>--}}
                                 <button class="btn btn-primary border-success align-items-center btn-success" type="button">Next<i class="fa fa-angle-right ml-2"></i></button>
                             </div>
                         </div>

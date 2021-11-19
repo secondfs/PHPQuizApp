@@ -7,31 +7,33 @@
             <div class="body">
                 <ol>
                     <li>
-                        <mark>Jerry Wood</mark>
-                        <small>948</small>
+                        <mark>{{ $passing->nickname }}</mark>
+                        <mark> {{ $passing->correct_answers  }}/{{ Config::get('app.questionCount') }}</mark>
+                        <small> {{  date("d-m-Y", strtotime($passing->created_at))  }}</small>
                     </li>
-                    <li>
-                        <mark>Brandon Barnes</mark>
-                        <small>750</small>
-                    </li>
-                    <li>
-                        <mark>Raymond Knight</mark>
-                        <small>684</small>
-                    </li>
-                    <li>
-                        <mark>Trevor McCormick</mark>
-                        <small>335</small>
-                    </li>
-                    <li>
-                        <mark>Andrew Fox</mark>
-                        <small>296</small>
-                    </li>
+
+                    @foreach($all as $user )
+                        <li class="{{ $user->nickname == $passing->nickname ? "bg-success" : ''}}">
+                            <mark>{{ $user->nickname }}</mark>
+                            <mark> {{ $user->correct_answers ?? 0 }}/{{ Config::get('app.questionCount') }}</mark>
+                            <small> {{  date("d-m-Y", strtotime($user->created_at))  }}</small>
+                        </li>
+                    @endforeach
                 </ol>
             </div>
         </div>
     </div>
+
+    <div>
+        <div class="leaderboard">
+
+            <div class="body">
+                <p>Your have {{ $passing->correct_answers }} correct answers from {{ Config::get('app.questionCount') }} </p>
+            </div>
+        </div>
+    </div>
     @push('quizJs')
-        <script src="/quiz.js" defer></script>
+{{--        <script src="/quiz.js" defer></script>--}}
         <link rel="stylesheet" href="/quizLeaderboard.css">
     @endpush
 </x-layout>

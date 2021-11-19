@@ -19,12 +19,15 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
-//Route::get('quiz/run/', function () {
-//    return view('quizes.index');
-//});
+Route::post('/quiz/run',[PassingsController::class, 'create']);
 
-//Route::post('quiz/run/',[QuizController::class, 'create']);
-Route::get('quiz/run/',[QuizController::class, 'index']);
+//move to API roots
+//Route::post('/quiz/{nickname}', [PassingsController::class, 'save']);
+
+Route::get('/quiz/{nickname}', [PassingsController::class, 'index']);
+
+//Route::get('quiz/run/',[PassingsController::class, 'index']);
+
 Route::get('/test/{id}',[QuestionsController::class, 'test']);
 Route::post('/api/answer/{questionId}',[QuestionsController::class, 'isCorrect']);
 Route::get('/quiz/leaderboard',function () {

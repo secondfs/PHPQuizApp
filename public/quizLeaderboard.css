@@ -1,8 +1,3 @@
-/*
- * Reference - https://codepen.io/supah/pen/WwrJpw
- */
-
-/* basic */
 *,
 *:before,
 *:after {
@@ -34,7 +29,7 @@ a {
 
 /* container */
 .container {
-    width: 300px;
+    /*width: 300px;*/
     height: auto;
     border-radius: 10px;
     background-color: white;
