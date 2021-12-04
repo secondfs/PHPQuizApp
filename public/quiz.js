@@ -28,7 +28,7 @@ function doAnswer() {
 
     fillAnswerArray();
     if(isLastQuestion()) {
-        alert("it's over");
+
         saveQuizResult();
         displayQuizResult();
         return;
@@ -57,13 +57,6 @@ function doAnswer() {
 
 async function displayQuizResult() {
     window.location.replace(`${window.location.origin}/quiz/${nickname}/`);
-    // let response =  await fetch(`${window.location.origin}/quiz/${nickname}/`);
-    // let result = await response.json();
-    // if (!response.ok) {
-    //     throw new Error("HTTP error " + response.status);
-    // }
-    // console.log(result);
-
 }
 
 async function saveQuizResult() {
@@ -126,7 +119,6 @@ async function sendAnswer(answer,questionId) {
     let response = await fetch(`/api/answer/${questionId}/`, {
         method: 'POST',
         headers: {
-            // 'Content-Type': 'application/json;charset=utf-8',
             'Content-Type': 'application/json',
             'Accept': 'application/json',
             "X-CSRF-TOKEN": token,
@@ -134,18 +126,24 @@ async function sendAnswer(answer,questionId) {
         },
         body: JSON.stringify(data)
     });
+    console.log(response.json());
     if (!response.ok) {
         throw new Error("HTTP error " + response.status);
     }
     let result = await response.json();
-    if(result == true) {
-        return correctAnswers++;
-    }
+    // console.log(result);
+
+    // if( result) {
+    //     alert('quiz complete');
+    // }
+    // if(result == true) {
+    //     return correctAnswers++;
+    // }
 }
 
 function isLastQuestion() {
 
-    return currentQuestion >= questionCount - 1? true : false;
+    return currentQuestion >= questionCount - 1 ? true : false;
 }
 
 answerButtons.forEach(
@@ -164,6 +162,8 @@ successButtons.forEach(
 
 
 //do async request (xhr) after answering last question
+
+
 
 
 

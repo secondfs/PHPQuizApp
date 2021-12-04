@@ -20,5 +20,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('/api/answer/{question_id}/',[QuestionsController::class, 'isCorrect']);
+Route::post('/api/answer/{question_id}/',[QuestionsController::class, 'handleAnswers']);
 Route::post('/api/quiz/{nickname}', [PassingsController::class, 'save']);

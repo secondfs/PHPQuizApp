@@ -21,12 +21,9 @@ Route::get('/', function () {
 });
 Route::post('/quiz/run',[PassingsController::class, 'create']);
 
-//move to API roots
-//Route::post('/quiz/{nickname}', [PassingsController::class, 'save']);
 
 Route::get('/quiz/{nickname}', [PassingsController::class, 'index']);
 
-//Route::get('quiz/run/',[PassingsController::class, 'index']);
 
 Route::get('/test/{id}',[QuestionsController::class, 'test']);
 Route::post('/api/answer/{questionId}',[QuestionsController::class, 'isCorrect']);

@@ -8,14 +8,14 @@
                 <ol>
                     <li>
                         <mark>{{ $passing->nickname }}</mark>
-                        <mark> {{ $passing->correct_answers  }}/{{ Config::get('app.questionCount') }}</mark>
+                        <mark> {{ $passing->correct_answers  }}/{{ $passing->total_answers }}</mark>
                         <small> {{  date("d-m-Y", strtotime($passing->created_at))  }}</small>
                     </li>
 
                     @foreach($all as $user )
                         <li class="{{ $user->nickname == $passing->nickname ? "bg-success" : ''}}">
                             <mark>{{ $user->nickname }}</mark>
-                            <mark> {{ $user->correct_answers ?? 0 }}/{{ Config::get('app.questionCount') }}</mark>
+                            <mark> {{ $user->correct_answers ?? 0 }}/{{ $user->total_answers }}</mark>
                             <small> {{  date("d-m-Y", strtotime($user->created_at))  }}</small>
                         </li>
                     @endforeach
@@ -28,7 +28,7 @@
         <div class="leaderboard">
 
             <div class="body">
-                <p>Your have {{ $passing->correct_answers }} correct answers from {{ Config::get('app.questionCount') }} </p>
+                <p>Your have {{ $passing->correct_answers }} correct answers from {{ $passing->total_answers }} </p>
             </div>
         </div>
     </div>

@@ -7,20 +7,30 @@ use App\Models\Question;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 
+/**
+ * Class PassingsController
+ * @package App\Http\Controllers
+ */
 class PassingsController extends Controller
 {
 
-    public function save($id_or_nick)
+    /**
+     * @param $nickname
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     */
+    public function save($nickname)
     {
         $correctAnswers = request('correct_answers');
-//        $user = User::where('id' , '=', $id_or_username)->orWhere('username', $id_or_username)->firstOrFail();
-        $passings = Passings::where('id', $id_or_nick)->orWhere('nickname',$id_or_nick)->firstOrFail();
+        $passings = Passings::query()->where('nickname', $nickname)->findOrFail();
         $passings->correct_answers = $correctAnswers;
         $passings->save();
 
         return response('save',200);
     }
 
+    /**
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
     public function create()
     {
         $this->saveNickname();
@@ -36,11 +46,14 @@ class PassingsController extends Controller
 
     }
 
+    /**
+     *
+     */
     public function saveNickname()
     {
         $passing = new Passings;
         $passing->nickname = request('nickname');
-        $passing->total_answers = 10;
+        $passing->total_answers = 10;//todo change this to config
         $passing->save();
 //        $passing = Passings::create([
 //            'nickname' => \request('nickname'),
@@ -48,11 +61,15 @@ class PassingsController extends Controller
 //        ]);
     }
 
+    /**
+     * @param $nickname
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
     public function index($nickname)
     {
-        $all = Passings::all()->sortByDesc('correct_answers')->take(5);
+        $all = Passings::query()->orderByDesc('correct_answers')->take(5);
 //        dd($all);
-        $passing = Passings::where('nickname',$nickname)->first();
+        $passing = Passings::query()->where('nickname',$nickname)->firstOrFail();
         return view('quizes.results',[
             'passing' => $passing,
             'all' => $all,
