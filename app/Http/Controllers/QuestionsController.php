@@ -47,7 +47,7 @@ class QuestionsController extends Controller
 //
 //        ];
 //        return response( json_encode($response),200);
-        return response()->json(["a" => "b"],200)->withCallback($request->input('callback'));
+        return response()->json(["a" => "b"],200);
 
     }
 

@@ -126,16 +126,12 @@ async function sendAnswer(answer,questionId) {
         },
         body: JSON.stringify(data)
     });
-    console.log(response.json());
     if (!response.ok) {
         throw new Error("HTTP error " + response.status);
     }
     let result = await response.json();
     // console.log(result);
 
-    // if( result) {
-    //     alert('quiz complete');
-    // }
     // if(result == true) {
     //     return correctAnswers++;
     // }
