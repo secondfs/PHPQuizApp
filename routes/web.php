@@ -26,7 +26,7 @@ Route::get('/quiz/{nickname}', [PassingsController::class, 'index']);
 
 
 Route::get('/test/{id}',[QuestionsController::class, 'test']);
-Route::post('/api/answer/{questionId}',[QuestionsController::class, 'isCorrect']);
+
 Route::get('/quiz/leaderboard',function () {
     return view('quizes.results');
 });

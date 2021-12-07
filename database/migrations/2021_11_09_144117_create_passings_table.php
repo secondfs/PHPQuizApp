@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Schema;
 
 class CreatePassingsTable extends Migration
@@ -17,7 +18,8 @@ class CreatePassingsTable extends Migration
             $table->id();
             $table->string('nickname')->unique();
             $table->integer('correct_answers')->nullable();
-            $table->integer('total_answers');// Should take this from app config
+            $table->integer('total_answers')->default(Config::get('app.questionCount'));// Should take this from app config
+            $table->integer('current_question')->default('1');
             $table->timestamp('created_at')->useCurrent();
         });
     }

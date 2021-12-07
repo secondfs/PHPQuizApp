@@ -20,6 +20,8 @@ class PassingsController extends Controller
      */
     public function save($nickname)
     {
+
+
         $correctAnswers = request('correct_answers');
         $passings = Passings::query()->where('nickname', $nickname)->findOrFail();
         $passings->correct_answers = $correctAnswers;
@@ -33,7 +35,11 @@ class PassingsController extends Controller
      */
     public function create()
     {
-        $this->saveNickname();
+        $passing = new Passings;
+        $passing->nickname = request('nickname');
+        $passing->correct_answers = 0;
+        $passing->save();
+
         $nickname = request('nickname');
         $questionCount = Config::get('app.questionCount');
 
@@ -47,28 +53,12 @@ class PassingsController extends Controller
     }
 
     /**
-     *
-     */
-    public function saveNickname()
-    {
-        $passing = new Passings;
-        $passing->nickname = request('nickname');
-        $passing->total_answers = 10;//todo change this to config
-        $passing->save();
-//        $passing = Passings::create([
-//            'nickname' => \request('nickname'),
-//            'total_answers' => 10,
-//        ]);
-    }
-
-    /**
      * @param $nickname
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
     public function index($nickname)
     {
         $all = Passings::query()->orderByDesc('correct_answers')->take(5);
-//        dd($all);
         $passing = Passings::query()->where('nickname',$nickname)->firstOrFail();
         return view('quizes.results',[
             'passing' => $passing,

@@ -1,4 +1,4 @@
-let currentQuestion = 0;
+let currentQuestion = 1;
 let answer = [];
 let correctAnswers = 0;
 let questionCount = document.querySelector('div#question-all').dataset.questioncount;
@@ -8,6 +8,7 @@ let nickname = document.querySelector('div#question-all').dataset.nickname;
 
 const token = questionBlocks.item(currentQuestion).querySelector('input[name="_token"]').getAttribute('value');
 
+//todo get counters from API to clean up js
 
 let successButtons = document.querySelectorAll('.btn-success');
 let answerButtons = document.querySelectorAll('button.checkbox');
@@ -23,20 +24,16 @@ function chooseAnswer() {
 }
 
 function doAnswer() {
-    let questionId = questionBlocks.item(currentQuestion).querySelector('span.question_id').dataset.questionId;
+    let questionId = questionBlocks.item(currentQuestion - 1).querySelector('span.question_id').dataset.questionId;
 
 
     fillAnswerArray();
-    if(isLastQuestion()) {
 
-        saveQuizResult();
-        displayQuizResult();
-        return;
-    }
+    sendAnswer(answer,questionId);
+
     doNextQuestionVisible(currentQuestion);
     clearPreviousAnswer();
 
-    sendAnswer(answer,questionId);
 
 
     answer = [];
@@ -45,8 +42,8 @@ function doAnswer() {
 
 
     function fillAnswerArray() {
-        questionBlocks.item(currentQuestion).querySelectorAll(".checkbox.active").forEach(element => {
-            answer.push(element.dataset.choise);
+        questionBlocks.item(currentQuestion - 1).querySelectorAll(".checkbox.active").forEach(element => {
+            answer.push(parseInt(element.dataset.choise));
         })
     }
 
@@ -80,7 +77,7 @@ async function saveQuizResult() {
         throw new Error("HTTP error " + response.status);
     }
     let result = await response.json();
-    console.log(result);
+    console.log('quiz saves');
 
 }
 
@@ -100,8 +97,8 @@ function getInnermostHovered() {
 }
 
 function doNextQuestionVisible(currentQuestion) {
-    let questionBlockActive = document.querySelectorAll('div.question-block').item(currentQuestion);
-    let questionBlockNext = document.querySelectorAll('div.question-block').item(currentQuestion + 1);
+    let questionBlockActive = document.querySelectorAll('div.question-block').item(currentQuestion - 1);
+    let questionBlockNext = document.querySelectorAll('div.question-block').item(currentQuestion);
     questionBlockActive.style.display="none";
 
 
@@ -110,13 +107,14 @@ function doNextQuestionVisible(currentQuestion) {
 
 async function sendAnswer(answer,questionId) {
     let data = {
+        'nickname' : nickname,
         'answer' : answer,
         'questionId' : questionId,
     }
 
 
 
-    let response = await fetch(`/api/answer/${questionId}/`, {
+    let response = await fetch(`/api/answer/${questionId}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -130,17 +128,13 @@ async function sendAnswer(answer,questionId) {
         throw new Error("HTTP error " + response.status);
     }
     let result = await response.json();
-    // console.log(result);
-
-    // if(result == true) {
-    //     return correctAnswers++;
-    // }
+    if( result.isLastQuestion) {
+        saveQuizResult();
+        displayQuizResult();
+        return;
+    }
 }
 
-function isLastQuestion() {
-
-    return currentQuestion >= questionCount - 1 ? true : false;
-}
 
 answerButtons.forEach(
     element => {
