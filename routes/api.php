@@ -21,4 +21,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::post('/answer/{questionId}/',[QuestionsController::class, 'handleAnswers']);
-Route::post('/quiz/{nickname}', [PassingsController::class, 'save']);
+Route::post('/quiz/{nickname}', [PassingsController::class, 'store']);

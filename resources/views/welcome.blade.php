@@ -4,5 +4,9 @@
     </div>
 
     <x-forms.nickname-form></x-forms.nickname-form>
+    @push('appJs')
+        <link rel="stylesheet" href="/app.css">
+        <script src="/app.js" defer></script>
+    @endpush
 </x-layout>
 

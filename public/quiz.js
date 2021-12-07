@@ -6,7 +6,7 @@ let questionBlocks = document.querySelectorAll('div.question-block');
 let respondCharSpan = document.querySelectorAll('.respond-char');
 let nickname = document.querySelector('div#question-all').dataset.nickname;
 
-const token = questionBlocks.item(currentQuestion).querySelector('input[name="_token"]').getAttribute('value');
+const token = questionBlocks.item(currentQuestion - 1).querySelector('input[name="_token"]').getAttribute('value');
 
 //todo get counters from API to clean up js
 
@@ -29,24 +29,31 @@ function doAnswer() {
 
     fillAnswerArray();
 
-    sendAnswer(answer,questionId);
+    const response = sendAnswer(answer,questionId);
+
+    (() => {
+        response.then((a) => {
+            currentQuestion = a.currentQuestion;
+            if( a.isLastQuestion) {
+                alert('last');
+                saveQuizResult();
+                displayQuizResult();
+                return;
+            }
+        });
+    })();
+
 
     doNextQuestionVisible(currentQuestion);
     clearPreviousAnswer();
 
-
-
     answer = [];
-    currentQuestion++;
-
-
 
     function fillAnswerArray() {
-        questionBlocks.item(currentQuestion - 1).querySelectorAll(".checkbox.active").forEach(element => {
+        questionBlocks.item(currentQuestion - 1 ).querySelectorAll(".checkbox.active").forEach(element => {
             answer.push(parseInt(element.dataset.choise));
         })
     }
-
 
 
 
@@ -71,6 +78,7 @@ async function saveQuizResult() {
             "X-CSRF-TOKEN": token,
 
         },
+        // body: JSON.stringify(data)
         body: JSON.stringify(data)
     });
     if (!response.ok) {
@@ -78,6 +86,7 @@ async function saveQuizResult() {
     }
     let result = await response.json();
     console.log('quiz saves');
+    return;
 
 }
 
@@ -112,8 +121,6 @@ async function sendAnswer(answer,questionId) {
         'questionId' : questionId,
     }
 
-
-
     let response = await fetch(`/api/answer/${questionId}`, {
         method: 'POST',
         headers: {
@@ -128,11 +135,9 @@ async function sendAnswer(answer,questionId) {
         throw new Error("HTTP error " + response.status);
     }
     let result = await response.json();
-    if( result.isLastQuestion) {
-        saveQuizResult();
-        displayQuizResult();
-        return;
-    }
+    return result;
+
+
 }
 
 

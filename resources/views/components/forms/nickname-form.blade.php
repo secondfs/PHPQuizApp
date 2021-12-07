@@ -5,7 +5,14 @@
         @csrf
 
         <input type="text"
-               name="nickname">
+               name="nickname"
+               value="{{ old('nickname') }}"
+        >
         <button type="submit" id="pushNickname"> Submit </button>
+        @error('nickname')
+            <div class="alert alert-danger">
+                <span> {{ $message }}</span>
+            </div>
+        @enderror
     </form>
 </div>

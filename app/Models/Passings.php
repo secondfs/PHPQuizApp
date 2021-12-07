@@ -9,7 +9,9 @@ class Passings extends Model
 {
     protected $fillable = [
         'nickname',
+        'correct_answers',
     ];
+
     public $timestamps = false;
 
     use HasFactory;

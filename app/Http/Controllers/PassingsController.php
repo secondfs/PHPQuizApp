@@ -6,6 +6,7 @@ use App\Models\Passings;
 use App\Models\Question;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Validation\ValidationException;
 
 /**
  * Class PassingsController
@@ -18,36 +19,38 @@ class PassingsController extends Controller
      * @param $nickname
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      */
-    public function save($nickname)
+    public function store(Request $request)
     {
+        $params = $this->validatePassing($request);
+
+        //todo throw exception when correct_answers failing validation
 
 
-        $correctAnswers = request('correct_answers');
-        $passings = Passings::query()->where('nickname', $nickname)->findOrFail();
-        $passings->correct_answers = $correctAnswers;
-        $passings->save();
+        $passing = Passings::query()->where('nickname', $request->input('nickname'))->findOrFail();
+        $passing->correct_answers = $params['correct_answers'];
+        $passing->save();
 
-        return response('save',200);
+        return response('saved',200);
     }
 
     /**
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
-    public function create()
+    public function create(Request $request)
     {
-        $passing = new Passings;
-        $passing->nickname = request('nickname');
-        $passing->correct_answers = 0;
-        $passing->save();
+        $params = $this->validatePassing($request);
+        $params['correct_answers'] = 0;
 
-        $nickname = request('nickname');
+
+        Passings::create($params);
+
         $questionCount = Config::get('app.questionCount');
 
         return view('quizes.index',[
 //            'questions' => Question::inRandomOrder()->take($questionCount)->get(),
             'questions' => Question::take($questionCount)->get(),
-            'respond_chars' => ['a','b','c'],
-            'nickname' => $nickname,
+            'respond_chars' => ['a','b','c'], //todo make this better
+            'nickname' => $params['nickname'],
         ]);
 
     }
@@ -58,12 +61,22 @@ class PassingsController extends Controller
      */
     public function index($nickname)
     {
-        $all = Passings::query()->orderByDesc('correct_answers')->take(5);
+        $all = Passings::query()->orderByDesc('correct_answers')->get()->take(5); // todo figure this out
+        \Debugbar::info($all);
         $passing = Passings::query()->where('nickname',$nickname)->firstOrFail();
         return view('quizes.results',[
             'passing' => $passing,
             'all' => $all,
         ]);
+    }
+
+    public function validatePassing(Request $request)
+    {
+        return $request->validate([
+            'nickname' => 'required|unique:passings|alpha-num|between:4,20',
+            'correct_answers' => 'nullable|json',
+        ]);
+
     }
 
 }
