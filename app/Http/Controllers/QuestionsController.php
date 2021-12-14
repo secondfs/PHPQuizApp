@@ -40,7 +40,7 @@ class QuestionsController extends Controller
             'isLastQuestion' => $this->isLastQuestion($currentQuestion),
             'correctAnswers' => $this->correctAnswers,
         ];
-        //todo find lib to transform camel case to other cases
+        //todo find lib to transform camel case to other cases (see later https://github.com/kirkbushell/eloquence/issues/97)
 
         if( $this->isCorrect($request->answer, $this->correctAnswers) ) {
 

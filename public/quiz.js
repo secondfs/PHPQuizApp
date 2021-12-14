@@ -5,7 +5,8 @@ let questionBlocks = document.querySelectorAll('div.question-block');
 let respondCharSpan = document.querySelectorAll('.respond-char');
 
 
-const token = questionBlocks.item(currentQuestion - 1).querySelector('input[name="_token"]').getAttribute('value'); // todo remove token from all but 1 question (to header metateg)
+// todo remove token from all but 1 question (to header metateg) (done)
+const token = document.querySelector("meta[property='token']").getAttribute('content')
 
 let successButtons = document.querySelectorAll('.btn-success');
 let answerButtons = document.querySelectorAll('button.checkbox');
@@ -28,7 +29,7 @@ function doAnswer() {
     sendAnswer(answerIds,questionId,nickname)
         .then( response => response.json())
         .then( ({answersCount,isLastQuestion,correctAnswersCount,correctAnswers}) => {
-            //todo show to user correct answer(each) with setTimeout
+            //todo show to user correct answer(each) with setTimeout (done)
                 if( isLastQuestion) {
                     showQuizResult(nickname);
                 }else{
@@ -58,12 +59,9 @@ function showQuizResult(nickname) {
 }
 
 function highlightCorrectAnswer(correctAnswers) {
-    console.log(correctAnswers);
     let correctAnswerEl;
     correctAnswers.forEach(
         answer => {
-            console.log(answer + ' answer');
-            console.log(document.querySelector(`[data-choise="${answer}"]`));
             correctAnswerEl = document.querySelector(`[data-choise="${answer}"]`);
             correctAnswerEl.classList.add('bg-success');
         }

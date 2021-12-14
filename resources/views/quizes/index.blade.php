@@ -2,7 +2,6 @@
     <div id="question-all" data-questionCount="{{ Config::get('app.questionCount') }}" data-nickname="{{ $nickname }}">
         @foreach($questions as $question)
             <div class="container mt-5 question-block">
-                @csrf
                 <span class="hidden question_id" data-question-id="{{ $question->id }}"></span> {{-- change this later --}}
                 <div class="d-flex justify-content-center row">
                     <div class="col-md-10 col-lg-10">
