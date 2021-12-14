@@ -1,14 +1,11 @@
 let currentQuestion = 1;
-let answer = [];
-let correctAnswers = 0;
+
 let questionCount = document.querySelector('div#question-all').dataset.questioncount;
 let questionBlocks = document.querySelectorAll('div.question-block');
 let respondCharSpan = document.querySelectorAll('.respond-char');
-let nickname = document.querySelector('div#question-all').dataset.nickname;
 
-const token = questionBlocks.item(currentQuestion - 1).querySelector('input[name="_token"]').getAttribute('value');
 
-//todo get counters from API to clean up js
+const token = questionBlocks.item(currentQuestion - 1).querySelector('input[name="_token"]').getAttribute('value'); // todo remove token from all but 1 question (to header metateg)
 
 let successButtons = document.querySelectorAll('.btn-success');
 let answerButtons = document.querySelectorAll('button.checkbox');
@@ -25,77 +22,60 @@ function chooseAnswer() {
 
 function doAnswer() {
     let questionId = questionBlocks.item(currentQuestion - 1).querySelector('span.question_id').dataset.questionId;
+    let nickname = document.querySelector('div#question-all').dataset.nickname;
+    let answerIds = fillAnswerArray();
 
-
-    fillAnswerArray();
-
-    const response = sendAnswer(answer,questionId);
-
-    (() => {
-        response.then((a) => {
-            currentQuestion = a.currentQuestion;
-            if( a.isLastQuestion) {
-                alert('last');
-                saveQuizResult();
-                displayQuizResult();
-                return;
+    sendAnswer(answerIds,questionId,nickname)
+        .then( response => response.json())
+        .then( ({answersCount,isLastQuestion,correctAnswersCount,correctAnswers}) => {
+            //todo show to user correct answer(each) with setTimeout
+                if( isLastQuestion) {
+                    showQuizResult(nickname);
+                }else{
+                    highlightCorrectAnswer(correctAnswers);
+                    setTimeout( () => {
+                        doNextQuestionVisible(currentQuestion);
+                        clearPreviousAnswer();
+                        currentQuestion++;
+                    }, 1000);
+                }
             }
-        });
-    })();
-
-
-    doNextQuestionVisible(currentQuestion);
-    clearPreviousAnswer();
-
-    answer = [];
-
-    function fillAnswerArray() {
-        questionBlocks.item(currentQuestion - 1 ).querySelectorAll(".checkbox.active").forEach(element => {
-            answer.push(parseInt(element.dataset.choise));
-        })
-    }
-
-
+        );
 
 }
 
-async function displayQuizResult() {
+function fillAnswerArray() {
+    let answerIds = [];
+    questionBlocks.item(currentQuestion - 1 ).querySelectorAll(".checkbox.active").forEach(element => {
+        answerIds.push(parseInt(element.dataset.choise));
+    })
+
+    return answerIds;
+}
+
+function showQuizResult(nickname) {
     window.location.replace(`${window.location.origin}/quiz/${nickname}/`);
 }
 
-async function saveQuizResult() {
-
-    let data = {
-        'correct_answers' : correctAnswers,
-        'nickname' : nickname,
-    }
-
-    let response = await fetch(`/api/quiz/${nickname}/`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            "X-CSRF-TOKEN": token,
-
-        },
-        // body: JSON.stringify(data)
-        body: JSON.stringify(data)
-    });
-    if (!response.ok) {
-        throw new Error("HTTP error " + response.status);
-    }
-    let result = await response.json();
-    console.log('quiz saves');
-    return;
+function highlightCorrectAnswer(correctAnswers) {
+    console.log(correctAnswers);
+    let correctAnswerEl;
+    correctAnswers.forEach(
+        answer => {
+            console.log(answer + ' answer');
+            console.log(document.querySelector(`[data-choise="${answer}"]`));
+            correctAnswerEl = document.querySelector(`[data-choise="${answer}"]`);
+            correctAnswerEl.classList.add('bg-success');
+        }
+    )
 
 }
-
 function clearPreviousAnswer() {
     answerButtons.forEach( element => { element.classList.remove("active")});
     respondCharSpan.forEach( element => { element.classList.remove("highlighted-answer")});
 }
 
-function getInnermostHovered() {
+function getInnermostHovered() { // todo this via css
     let n = document.querySelector(":hover");
     let nn;
     while (n) {
@@ -108,36 +88,27 @@ function getInnermostHovered() {
 function doNextQuestionVisible(currentQuestion) {
     let questionBlockActive = document.querySelectorAll('div.question-block').item(currentQuestion - 1);
     let questionBlockNext = document.querySelectorAll('div.question-block').item(currentQuestion);
+
     questionBlockActive.style.display="none";
-
-
     questionBlockNext.style.display="block";
 }
 
-async function sendAnswer(answer,questionId) {
+async function sendAnswer(answer,questionId,nickname) {
     let data = {
         'nickname' : nickname,
         'answer' : answer,
         'questionId' : questionId,
     }
 
-    let response = await fetch(`/api/answer/${questionId}`, {
+    return fetch(`/api/answer/${nickname}/${questionId}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
             "X-CSRF-TOKEN": token,
-
         },
         body: JSON.stringify(data)
     });
-    if (!response.ok) {
-        throw new Error("HTTP error " + response.status);
-    }
-    let result = await response.json();
-    return result;
-
-
 }
 
 
@@ -153,10 +124,6 @@ successButtons.forEach(
     }
 );
 
-
-
-
-//do async request (xhr) after answering last question
 
 
 

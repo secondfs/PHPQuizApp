@@ -3,6 +3,7 @@
 use App\Http\Controllers\PassingsController;
 use App\Http\Controllers\QuestionsController;
 use App\Http\Controllers\QuizController;
+use App\Models\Passings;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -24,8 +25,6 @@ Route::post('/quiz/run',[PassingsController::class, 'create']);
 
 Route::get('/quiz/{nickname}', [PassingsController::class, 'index']);
 
-
-Route::get('/test/{id}',[QuestionsController::class, 'test']);
 
 Route::get('/quiz/leaderboard',function () {
     return view('quizes.results');

@@ -19,7 +19,7 @@ class CreatePassingsTable extends Migration
             $table->string('nickname')->unique();
             $table->integer('correct_answers')->nullable();
             $table->integer('total_answers')->default(Config::get('app.questionCount'));// Should take this from app config
-            $table->integer('current_question')->default('1');
+            $table->integer('answers_count')->default('1');
             $table->timestamp('created_at')->useCurrent();
         });
     }

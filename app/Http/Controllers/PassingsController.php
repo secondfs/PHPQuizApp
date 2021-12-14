@@ -19,19 +19,18 @@ class PassingsController extends Controller
      * @param $nickname
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
-        $params = $this->validatePassing($request);
-
-        //todo throw exception when correct_answers failing validation
-
-
-        $passing = Passings::query()->where('nickname', $request->input('nickname'))->findOrFail();
-        $passing->correct_answers = $params['correct_answers'];
-        $passing->save();
-
-        return response('saved',200);
-    }
+//    public function storeCorrectAnswer(Request $request)
+//    {
+//        $params = $this->validatePassing($request);
+//
+//
+//
+//        $passing = Passings::query()->where('nickname', $request->input('nickname'))->findOrFail();
+//        $passing->correct_answers = $params['correct_answers'];
+//        $passing->save();
+//
+//        return response('saved',200);
+//    }
 
     /**
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
@@ -61,7 +60,7 @@ class PassingsController extends Controller
      */
     public function index($nickname)
     {
-        $all = Passings::query()->orderByDesc('correct_answers')->get()->take(5); // todo figure this out
+        $all = Passings::query()->orderByDesc('correct_answers')->take(5)->get();
         \Debugbar::info($all);
         $passing = Passings::query()->where('nickname',$nickname)->firstOrFail();
         return view('quizes.results',[
@@ -70,6 +69,10 @@ class PassingsController extends Controller
         ]);
     }
 
+    /**
+     * @param Request $request
+     * @return array
+     */
     public function validatePassing(Request $request)
     {
         return $request->validate([

@@ -9,7 +9,7 @@
                         <div class="border">
                             <div class="question bg-white p-3 border-bottom">
                                 <div class="d-flex flex-row justify-content-between align-items-center mcq">
-                                    <h4>PHP Quiz</h4><span>( {{ $loop->iteration }} of 20)</span>
+                                    <h4>PHP Quiz</h4><span>( {{ $loop->iteration }} of {{ Config::get('app.questionCount') }}</span>
                                 </div>
                             </div>
                             <div class="question bg-white p-3 border-bottom">
@@ -19,7 +19,7 @@
                                 </div>
                                 @foreach($question->answers as $answer)
                                     <div class="ans mt-2 ml-2">
-                                        <button data-choise="{{ $loop->index }}"class="checkbox d-flex">
+                                        <button data-choise="{{ $answer->id }}"class="checkbox d-flex">
                                         <span class="respond-char py-2 px-3 mr-2 my-2">
                                             {{ strtoupper($respond_chars[$loop->index]) }}
                                         </span>
@@ -31,9 +31,11 @@
                                 @endforeach
                             </div>
                             <div class="d-flex flex-row justify-content-between align-items-center p-3 bg-white">
-{{--                                <button class="btn btn-primary d-flex align-items-center btn-danger" type="button"><i class="fa fa-angle-left mt-1 mr-1"></i>&nbsp;previous</button>--}}
                                 <button class="btn btn-primary border-success align-items-center btn-success" type="button">Next<i class="fa fa-angle-right ml-2"></i></button>
                             </div>
+{{--                            <div class="question bg-white p-3 border-bottom">--}}
+{{--                                <h3>Right answer is </h3>--}}
+{{--                            </div>--}}
                         </div>
                     </div>
                 </div>
