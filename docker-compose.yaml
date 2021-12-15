@@ -25,12 +25,15 @@ services:
 #    restart: unless-stopped
     environment:
       MYSQL_DATABASE: ${DB_DATABASE}
-      MYSQL_ALLOW_EMPTY_PASSWORD: 1
-#      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-#      MYSQL_PASSWORD: ${DB_PASSWORD}
-#      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_USER: ${DB_USERNAME}
       SERVICE_TAGS: dev
       SERVICE_NAME: mysql
+    healthcheck:
+      test: "/etc/init.d/mysql status"
+      interval: 10s
+      retries: 120
     volumes:
     - ./docker-compose/mysql/:/docker-entrypoint-initdb.d
     networks:
