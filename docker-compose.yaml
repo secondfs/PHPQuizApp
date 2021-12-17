@@ -1,57 +1,60 @@
 version: "3.0"
 
 services:
+
+  nginx:
+    build:
+      context: .
+      dockerfile: docker/nginx/Dockerfile
+    restart: always
+    networks:
+      - network
+    ports:
+      - 8081:80
+
+
   app:
     build:
-      args:
-        user: user
-        uid: 1000
-      context: ./
-      dockerfile: quizApp.dockerfile
-    image: quizapp
-    container_name: quizApp
+#      args:
+#        user: user
+#        uid: 1000
+      context: .
+      dockerfile: docker/app/Dockerfile
+#    image: quizapp
+#    container_name: quizApp
     restart: unless-stopped
-    working_dir: /var/www
-    networks:
-      - quizApp
-    depends_on:
-      - mysqldb
     volumes:
-    - ./:/var/www
+      - ./:/app
+    networks:
+      - network
+    depends_on:
+      - database
 
-  mysqldb:
-    container_name: mysqldb
-    image: mysql
+  database:
+#    container_name: mysqldb
+    image: mysql:8
 #    restart: unless-stopped
     environment:
       MYSQL_DATABASE: ${DB_DATABASE}
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
       MYSQL_PASSWORD: ${DB_PASSWORD}
       MYSQL_USER: ${DB_USERNAME}
-      SERVICE_TAGS: dev
-      SERVICE_NAME: mysql
+      TZ: UTC
+#      SERVICE_TAGS: dev
+#      SERVICE_NAME: mysql
     healthcheck:
       test: "/etc/init.d/mysql status"
       interval: 10s
       retries: 120
-    volumes:
-    - ./docker-compose/mysql/:/docker-entrypoint-initdb.d
+#s    volumes:
+#      - ./docker/mysql/:/docker-entrypoint-initdb.d:ro
     networks:
-      - quizApp
-  nginx:
-    image: nginx:1.20-alpine
-    container_name: nginx
-    restart: unless-stopped
+      - network
     ports:
-    - 8000:80
-    volumes:
-    - ./:/var/www
-    - ./docker-compose/nginx:/etc/nginx/conf.d
-    networks:
-      - quizApp
+      - 33061:3306
 
 networks:
-  quizApp:
+  network:
     driver: bridge
 
 
